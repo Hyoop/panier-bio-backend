@@ -13,6 +13,9 @@ const recipeRoutes = require('./routes/recipe');
 const app = express();
 
 app.use(bodyParser.json());
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
+
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -25,12 +28,21 @@ app.use((req, res, next) => {
 
 // Routes 
 app.use('/panier', panierRoutes);
-app.use('/recipe', recipeRoutes);
+//app.use('/recipe', recipeRoutes);
+
+//Error handling
+app.use((error, req, res, next) => {
+  console.log(error);
+  const status = error.statusCode || 500;
+  const message = error.message;
+  res.status(status).json({ message: message });
+});
 
 // Database
 mongoose.connect(
     'mongodb://localhost:27017/MonPtitPanier',
-    { useNewUrlParser: true }
+    { useNewUrlParser: true,
+      useUnifiedTopology: true },
 )
 .then(result => {
         app.listen(8080);
