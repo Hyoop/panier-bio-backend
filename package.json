@@ -1,0 +1,27 @@
+{
+  "name": "paniersbio-backend",
+  "version": "1.0.0",
+  "description": "Developpement de la partie Backend en utilisant le stack MERN pour l'application MonPtitPanier.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hyoop77/panier-bio-backend.git"
+  },
+  "author": "Sovath TAN, David KHA",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hyoop77/panier-bio-backend/issues"
+  },
+  "homepage": "https://github.com/Hyoop77/panier-bio-backend#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}
