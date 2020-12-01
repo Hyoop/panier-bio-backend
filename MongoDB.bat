@@ -1,0 +1,1 @@
+start /b mongod  --logpath %cd%\log\mongo.log --dbpath %cd%\data --port 27017
