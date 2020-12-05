@@ -1,7 +1,7 @@
 const { validationResult } = require('express-validator');
 const Vegetable = require('../models/Vegetable');
 
-exports.getAddVegetable = (req, res, next) => {
+exports.createVegetable = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         const error = new Error('Validation failed, entered data is incorrect.');
@@ -9,18 +9,22 @@ exports.getAddVegetable = (req, res, next) => {
         throw errors;
     }
     
-    let imageUrl = '';
-    if(! req.file || ! req.file.path){
-        imageUrl = "images/default.png";
-    } else {
-        imageUrl = req.file.path;
-    }
+    
     const name = req.body.name;
     const content = req.body.content;
+    let oftheweek = req.body.oftheweek || false;
+    let imageUrl = req.body.image;
+    if(req.file){
+        imageUrl = req.file.path;
+    }
+    if(!imageUrl){
+      imageUrl = "images/default.png";
+    }
     const vegetable = new Vegetable({
         name: name,
         imageUrl: imageUrl,
-        content: content
+        content: content,
+        oftheweek: oftheweek,
     });
     vegetable.save()
     .then(
@@ -51,7 +55,9 @@ exports.getVegetable = (req, res, next) => {
           throw error;
         }
   
-        res.status(200).json({message: 'vegetable fetched', vegetable: vegetable});
+        res.status(200).json({
+          message: 'vegetable fetched', 
+          vegetable: vegetable});
       })
       .catch(err => {
         if (!err.statusCode){
@@ -59,4 +65,83 @@ exports.getVegetable = (req, res, next) => {
         }
         next(err);
       })
+}
+
+exports.getVegetables = (req, res, next) => {
+  Vegetable.find()
+  .then(
+    vegetables => {res.status(200)
+    .json({
+      message: 'Fetched vegetables successfully.',
+      vegetables: vegetables});
+    }
+  )
+  .catch(err => {
+    if (!err.statusCode){
+      err.statusCode = 500;
+    }
+    next(err);
+  })
+}
+
+exports.deleteVegetable = (req, res, next) => {
+  const vegeId = req.params.vegeId;
+  Vegetable.findByIdAndDelete(vegeId)
+      .then(vegetable => {
+        if(!vegetable) {
+          const error = new Error('Could not find vegetable.');
+          error.statusCode = 404;
+          throw error;
+        }
+        res.status(200).json({message: 'Deleted vegetable.'});
+      })
+      .catch(err => {
+        if (!err.statusCode){
+          err.statusCode = 500;
+        }
+        next(err);
+      })
+}
+
+exports.updateVegetable = (req, res, next) => {
+  const vegeId = req.params.vegeId;
+  const name = req.body.name;
+  const content = req.body.content;
+  const oftheweek = req.body.oftheweek || false;
+  let imageUrl = req.body.image;
+  if(req.file){
+      imageUrl = req.file.path;
   }
+  if(!imageUrl){
+    imageUrl = "images/default.png";
+  }
+
+  Vegetable.findById(vegeId)
+  .then(vegetable => {
+    if(!vegetable) {
+      const error = new Error('Could not find vegetable.');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    vegetable.name = name;
+    vegetable.imageUrl = imageUrl;
+    vegetable.content = content;
+    vegetable.oftheweek = oftheweek;
+    return vegetable.save()
+  })
+  .then(
+    result => {
+        res.status(201).json({
+            message: 'Vegetable updated successfully!',
+            vegetable: result
+        })
+    }
+  )
+  .catch(err => {
+    if (!err.statusCode){
+      err.statusCode = 500;
+    }
+    next(err);
+  })
+}

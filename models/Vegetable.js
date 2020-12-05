@@ -14,6 +14,10 @@ const vegeSchema = new Schema({
         type: String,
         required: true,
     },
+    oftheweek: {
+        type: Boolean,
+        required: true, 
+    }
     
 })
 
