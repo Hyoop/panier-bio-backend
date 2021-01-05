@@ -4,9 +4,13 @@ const express = require('express');
 
 const router = express.Router();
 
-const panierController = require('../controllers/recipe');
+const recipeController = require('../controllers/recipe');
 
-// /recipe/add-recipe => GET
-//router.get('add-recipe', panierController.getAddRecipe);
+// /recipe/add-recipe => POST
+router.post('', recipeController.createRecipe);
+router.delete('/:reciId', recipeController.deleteRecipe);
+router.put('/:reciId', recipeController.updateRecipe);
 
+router.get('/:reciId', recipeController.getRecipe);
+router.put('/rate/:reciId',recipeController.updateRate);
 module.exports = router;

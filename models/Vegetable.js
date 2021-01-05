@@ -10,7 +10,7 @@ const vegeSchema = new Schema({
         type: String,
         required: false,
     },
-    content: {
+    quantity: {
         type: String,
         required: true,
     },
@@ -18,7 +18,7 @@ const vegeSchema = new Schema({
         type: Boolean,
         required: true, 
     }
-    
+
 })
 
 module.exports = mongoose.model('Vegetable', vegeSchema)

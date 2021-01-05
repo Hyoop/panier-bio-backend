@@ -8,12 +8,11 @@ exports.createVegetable = (req, res, next) => {
         error.statusCode = 422;
         throw errors;
     }
-    
-    
+
     const name = req.body.name;
-    const content = req.body.content;
+    const quantity = req.body.quantity;
     let oftheweek = req.body.oftheweek || false;
-    let imageUrl = req.body.image;
+    let imageUrl = req.body.imageUrl;
     if(req.file){
         imageUrl = req.file.path;
     }
@@ -23,7 +22,7 @@ exports.createVegetable = (req, res, next) => {
     const vegetable = new Vegetable({
         name: name,
         imageUrl: imageUrl,
-        content: content,
+        quantity: quantity,
         oftheweek: oftheweek,
     });
     vegetable.save()
@@ -67,6 +66,7 @@ exports.getVegetable = (req, res, next) => {
       })
 }
 
+
 exports.getVegetables = (req, res, next) => {
   Vegetable.find()
   .then(
@@ -106,7 +106,7 @@ exports.deleteVegetable = (req, res, next) => {
 exports.updateVegetable = (req, res, next) => {
   const vegeId = req.params.vegeId;
   const name = req.body.name;
-  const content = req.body.content;
+  const quantity = req.body.quantity;
   const oftheweek = req.body.oftheweek || false;
   let imageUrl = req.body.image;
   if(req.file){
@@ -126,7 +126,7 @@ exports.updateVegetable = (req, res, next) => {
 
     vegetable.name = name;
     vegetable.imageUrl = imageUrl;
-    vegetable.content = content;
+    vegetable.quantity = quantity;
     vegetable.oftheweek = oftheweek;
     return vegetable.save()
   })
@@ -141,6 +141,23 @@ exports.updateVegetable = (req, res, next) => {
   .catch(err => {
     if (!err.statusCode){
       err.statusCode = 500;
+    }
+    next(err);
+  })
+}
+
+exports.getWeek = (req, res, next) => {
+  Vegetable.find({oftheweek: true})
+  .then(
+    vegetables => {
+      res.json({
+      message: 'Fetched vegetables successfully.',
+      vegetables: vegetables});
+  })
+  .catch(err => {
+    if (!err.statusCode){
+      err.statusCode = 500;
+      err.message = "Could not find vegetables of the week";
     }
     next(err);
   })

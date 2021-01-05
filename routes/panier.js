@@ -14,6 +14,8 @@ router.put('/:vegeId', panierController.updateVegetable)
 // General
 
 // /panier/:vegeId
-router.get('vegetables/:vegeId', panierController.getVegetable);
-router.get('vegetables', panierController.getVegetables);
+router.get('/week/', panierController.getWeek);
+router.get('/:vegeId', panierController.getVegetable);
+router.get('', panierController.getVegetables);
+
 module.exports = router;

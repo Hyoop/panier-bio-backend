@@ -3,32 +3,76 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-
+const multer = require("multer");
 
 
 const panierRoutes = require('./routes/panier');
 const recipeRoutes = require('./routes/recipe');
 
 
+
+
 const app = express();
 
 app.use(bodyParser.json());
-app.use('/images', express.static(path.join(__dirname, 'images')));
+
+app.use('/images', express.static('./images'));
+
+
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null,'images');
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString() + '-' + file.originalname);
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(null,false);
+  }
+};
+
+
+
+app.use(
+  multer({ 
+    limits: 5000000, // file size < 5MB 
+    storage: fileStorage, 
+    fileFilter: fileFilter 
+  }).single('image')
+);
 
 
 
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader(
-      'Access-Control-Allow-Methods',
-      'OPTIONS, GET, POST, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
+        // Website you wish to allow to connect
+        res.setHeader('Access-Control-Allow-Origin', '*');
+
+        // Request methods you wish to allow
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    
+        // Request headers you wish to allow
+        res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
+    
+        // Set to true if you need the website to include cookies in the requests sent
+        // to the API (e.g. in case you use sessions)
+        res.setHeader('Access-Control-Allow-Credentials', true);
+    
+        // Pass to next layer of middleware
+        next();
   });
 
 // Routes 
 app.use('/panier', panierRoutes);
-//app.use('/recipe', recipeRoutes);
+app.use('/recipe', recipeRoutes);
 
 //Error handling
 app.use((error, req, res, next) => {

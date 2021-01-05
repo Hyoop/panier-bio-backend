@@ -1,0 +1,10 @@
+{
+    "title":"Le meilleur chocolat au lait",
+    "preparations":[{"step": "faire fondre de chocolat", "number": 1},{"step": "faire chauffer le lait", "number": 2}],
+    "ingredients":[{"ingredient": {"name": "chocolat", "quantity": 300, "unit": "g"}}, {"ingredient": {"name": "lait","quantity": 1, "unit": "L"}}],
+    "ustensils": [{"name": "four"},{"name": "poele"}],
+    "preparation_time":20,
+    "baking_time":20,
+    "difficulty":2,
+    "rate":4.8
+}
