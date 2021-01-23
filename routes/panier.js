@@ -1,21 +1,27 @@
-const express = require('express');
-const panierController = require('../controllers/panier');
+import express from "express";
+import {
+  createVegetable,
+  getVegetable,
+  getVegetables,
+  deleteVegetable,
+  updateVegetable,
+  getWeek,
+} from "../controllers/panier.js";
+import fileUpload from "../middleware/file-upload.js";
 
 const router = express.Router();
 
-
-
 // Admin control panel
 // /panier/add-vegetable => GET
-router.post('', panierController.createVegetable);
-router.delete('/:vegeId', panierController.deleteVegetable)
-router.put('/:vegeId', panierController.updateVegetable)
+router.post("", fileUpload.single("image"), createVegetable);
+router.delete("/:vegeId", deleteVegetable);
+router.put("/:vegeId", updateVegetable);
 
 // General
 
 // /panier/:vegeId
-router.get('/week/', panierController.getWeek);
-router.get('/:vegeId', panierController.getVegetable);
-router.get('', panierController.getVegetables);
+router.get("/week/", getWeek);
+router.get("/:vegeId", getVegetable);
+router.get("", getVegetables);
 
-module.exports = router;
+export default router;

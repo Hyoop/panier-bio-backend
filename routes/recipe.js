@@ -1,16 +1,28 @@
-const path = require('path');
-
-const express = require('express');
+import express from "express";
 
 const router = express.Router();
 
-const recipeController = require('../controllers/recipe');
+import {
+  createRecipe,
+  getRecipe,
+  getRecipes,
+  deleteRecipe,
+  updateRecipe,
+  updateRate,
+} from "../controllers/recipe.js";
+import fileUpload from "../middleware/file-upload.js";
 
-// /recipe/add-recipe => POST
-router.post('', recipeController.createRecipe);
-router.delete('/:reciId', recipeController.deleteRecipe);
-router.put('/:reciId', recipeController.updateRecipe);
+// /api/recipe/
+router.get("/", getRecipes);
+router.get("/:reciId", getRecipe);
 
-router.get('/:reciId', recipeController.getRecipe);
-router.put('/rate/:reciId',recipeController.updateRate);
-module.exports = router;
+// Create a recipe
+router.post("", fileUpload.single("image"), createRecipe);
+// Delete a recipe
+router.delete("/:reciId", deleteRecipe);
+// Edit a recipe
+router.put("/:reciId", updateRecipe);
+
+// Rate update
+router.put("/rate/:reciId", updateRate);
+export default router;
