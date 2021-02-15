@@ -60,6 +60,11 @@ const reciSchema = new Schema({
     type: Number,
     required: false,
   },
+
+  oftheweek: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 export default mongoose.model("Recipe", reciSchema);

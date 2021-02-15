@@ -7,5 +7,6 @@
     "preparation_time": 20,
     "baking_time": 20,
     "difficulty": 2,
-    "rate": 4.8
+    "rate": 4.8,
+    "oftheweek": true
 }

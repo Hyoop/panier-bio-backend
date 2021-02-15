@@ -18,6 +18,7 @@ const createRecipe = (req, res, next) => {
   const baking_time = req.body.baking_time;
   const difficulty = req.body.difficulty;
   const rate = req.body.rate;
+  const oftheweek = req.body.oftheweek;
   let imageUrl = req.body.image;
   if (req.file) {
     imageUrl = req.file.path;
@@ -37,6 +38,7 @@ const createRecipe = (req, res, next) => {
     baking_time: baking_time,
     difficulty: difficulty,
     rate: rate,
+    oftheweek: oftheweek,
   });
   recipe
     .save()
@@ -90,6 +92,23 @@ const getRecipes = (req, res, next) => {
       next(err);
     });
 };
+
+const getWeekRecipes = (req, res, next) => {
+  Recipe.find({ oftheweek: true })
+    .then((recipe) => {
+      res.status(200).json({
+        message: "Fetched recipes successfully.",
+        recipes: recipe,
+      });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
 const deleteRecipe = (req, res, next) => {
   const reciId = req.params.reciId;
   Recipe.findByIdAndDelete()
@@ -106,6 +125,7 @@ const deleteRecipe = (req, res, next) => {
       next(err);
     });
 };
+
 const updateRecipe = (req, res, next) => {
   const reciId = req.params.reciId;
   const title = req.body.title;
@@ -117,6 +137,7 @@ const updateRecipe = (req, res, next) => {
   const total_time = baking_time + preparation_time;
   const difficulty = req.body.difficulty;
   const rate = req.body.rate;
+  const oftheweek = req.body.oftheweek;
   let imageUrl = req.body.image;
   if (req.file) {
     imageUrl = req.file.path;
@@ -143,6 +164,7 @@ const updateRecipe = (req, res, next) => {
       recipe.baking_time = baking_time || recipe.baking_time;
       recipe.difficulty = difficulty || recipe.difficulty;
       recipe.rate = rate || recipe.rate;
+      recipe.oftheweek = oftheweek || recipe.oftheweek;
 
       return recipe.save();
     })
@@ -191,6 +213,7 @@ export {
   createRecipe,
   getRecipe,
   getRecipes,
+  getWeekRecipes,
   deleteRecipe,
   updateRecipe,
   updateRate,

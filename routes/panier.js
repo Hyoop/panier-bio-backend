@@ -8,20 +8,25 @@ import {
   getWeek,
 } from "../controllers/panier.js";
 import fileUpload from "../middleware/file-upload.js";
+import { checkauth, checkadmin } from "../middleware/check-auth.js";
 
 const router = express.Router();
 
+// /api/panier/
+router.get("/", checkauth, getVegetables);
+router.get("/week/", checkauth, getWeek);
+router.get("/:vegeId", checkauth, getVegetable);
+
 // Admin control panel
-// /panier/add-vegetable => GET
-router.post("", fileUpload.single("image"), createVegetable);
-router.delete("/:vegeId", deleteVegetable);
-router.put("/:vegeId", updateVegetable);
-
-// General
-
-// /panier/:vegeId
-router.get("/week/", getWeek);
-router.get("/:vegeId", getVegetable);
-router.get("", getVegetables);
+// /api/panier/add-vegetable
+router.post(
+  "",
+  checkauth,
+  checkadmin,
+  fileUpload.single("image"),
+  createVegetable
+);
+router.delete("/:vegeId", checkauth, checkadmin, deleteVegetable);
+router.put("/:vegeId", checkauth, checkadmin, updateVegetable);
 
 export default router;

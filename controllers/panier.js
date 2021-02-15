@@ -1,3 +1,4 @@
+import expressAsyncHandler from "express-async-handler";
 import { validationResult } from "express-validator";
 import Vegetable from "../models/Vegetable.js";
 
@@ -64,21 +65,18 @@ const getVegetable = (req, res, next) => {
     });
 };
 
-const getVegetables = (req, res, next) => {
-  Vegetable.find()
-    .then((vegetables) => {
-      res.status(200).json({
-        message: "Fetched vegetables successfully.",
-        vegetables: vegetables,
-      });
-    })
-    .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
+const getVegetables = expressAsyncHandler(async (req, res, next) => {
+  const vege = await Vegetable.find();
+  if (vege) {
+    res.status(200).json({
+      message: "Fetched vegetables successfully.",
+      vegetables: vege,
     });
-};
+  } else {
+    res.status(404);
+    throw new Error("Could not find vegetable");
+  }
+});
 
 const deleteVegetable = (req, res, next) => {
   const vegeId = req.params.vegeId;
