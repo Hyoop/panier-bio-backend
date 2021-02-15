@@ -16,11 +16,11 @@ import { checkauth, checkadmin } from "../middleware/check-auth.js";
 
 // /api/recipe/
 router.get("/", checkauth, getRecipes);
-router.get("/:reciId", checkauth, getRecipe);
+
 router.get("/week", checkauth, getWeekRecipes);
 // Rate update
 router.put("/rate/:reciId", checkauth, updateRate);
-
+router.get("/:reciId", checkauth, getRecipe);
 //Administrator
 // Create a recipe
 router.post(
