@@ -1,4 +1,4 @@
-import expressAsyncHandler from "express-async-handler";
+import AsyncHandler from "express-async-handler";
 import { validationResult } from "express-validator";
 import Vegetable from "../models/Vegetable.js";
 
@@ -65,7 +65,7 @@ const getVegetable = (req, res, next) => {
     });
 };
 
-const getVegetables = expressAsyncHandler(async (req, res, next) => {
+const getVegetables = AsyncHandler(async (req, res, next) => {
   const vege = await Vegetable.find();
   if (vege) {
     res.status(200).json({
@@ -155,10 +155,24 @@ const getWeek = (req, res, next) => {
     });
 };
 
+const getSearchVegetables = AsyncHandler(async (req, res, next) => {
+  const keyword = req.query.keyword
+    ? {
+        name: {
+          $regex: req.query.keyword,
+          $options: "i",
+        },
+      }
+    : {};
+  const vegetables = await Vegetable.find({ ...keyword });
+  res.json(vegetables);
+});
+
 export {
   createVegetable,
   getVegetable,
   getVegetables,
+  getSearchVegetables,
   deleteVegetable,
   updateVegetable,
   getWeek,

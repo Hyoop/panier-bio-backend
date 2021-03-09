@@ -1,60 +1,64 @@
+import AsyncHandler from "express-async-handler";
 import { validationResult } from "express-validator";
 import Recipe from "../models/Recipe.js";
 
-const createRecipe = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error = new Error("Validation failed, entered data is incorrect.");
-    error.statusCode = 422;
-    throw errors;
-  }
+const createRecipe = AsyncHandler(async (req, res, next) => {
+  console.log(req.body);
+  if (req.user.isAdmin) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error("Validation failed, entered data is incorrect.");
+      error.statusCode = 422;
+      throw errors;
+    }
 
-  const title = req.body.title;
-  const preparations = req.body.preparations;
-  const ingredients = req.body.ingredients;
-  const ustensils = req.body.ustensils;
-  const total_time = req.body.total_time;
-  const preparation_time = req.body.preparation_time;
-  const baking_time = req.body.baking_time;
-  const difficulty = req.body.difficulty;
-  const rate = req.body.rate;
-  const oftheweek = req.body.oftheweek;
-  let imageUrl = req.body.image;
-  if (req.file) {
-    imageUrl = req.file.path;
-  }
-  if (!imageUrl) {
-    imageUrl = "images/default.png";
-  }
+    const title = req.body.title;
+    const preparations = req.body.preparations;
+    const ingredients = JSON.parse(req.body.ingredients);
+    const ustensils = req.body.ustensils;
+    const total_time = req.body.total_time;
+    const preparation_time = req.body.preparation_time;
+    const baking_time = req.body.baking_time;
+    const difficulty = req.body.difficulty;
+    const rate = req.body.rate;
+    const oftheweek = req.body.oftheweek;
+    let imageUrl = req.body.image;
+    if (req.file) {
+      imageUrl = req.file.path;
+    }
+    if (!imageUrl) {
+      imageUrl = "images/default.png";
+    }
 
-  const recipe = new Recipe({
-    title: title,
-    imageUrl: imageUrl,
-    ingredients: ingredients,
-    preparations: preparations,
-    ustensils: ustensils,
-    total_time: total_time,
-    preparation_time: preparation_time,
-    baking_time: baking_time,
-    difficulty: difficulty,
-    rate: rate,
-    oftheweek: oftheweek,
-  });
-  recipe
-    .save()
-    .then((result) => {
-      res.status(201).json({
-        message: "Recipe added successfully!",
-        recipe: result,
-      });
-    })
-    .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
+    const recipe = new Recipe({
+      title: title,
+      imageUrl: imageUrl,
+      ingredients: ingredients,
+      preparations: preparations,
+      ustensils: ustensils,
+      total_time: total_time,
+      preparation_time: preparation_time,
+      baking_time: baking_time,
+      difficulty: difficulty,
+      rate: rate,
+      oftheweek: oftheweek,
     });
-};
+    recipe
+      .save()
+      .then((result) => {
+        res.status(201).json({
+          message: "Recipe added successfully!",
+          recipe: result,
+        });
+      })
+      .catch((err) => {
+        if (!err.statusCode) {
+          err.statusCode = 500;
+        }
+        next(err);
+      });
+  }
+});
 const getRecipe = (req, res, next) => {
   const reciId = req.params.reciId;
   Recipe.findById(reciId)
@@ -209,11 +213,60 @@ const updateRate = (req, res, next) => {
     });
 };
 
+const getSearchRecipesbyIngredients = AsyncHandler(async (req, res, next) => {
+  const keywordIngredient = req.query.keyword
+    ? {
+        "ingredients.name": {
+          $regex: req.query.keyword,
+          $options: "i",
+        },
+      }
+    : {};
+  const recipes = await Recipe.find({ ...keywordIngredient });
+  res.json(recipes);
+});
+
+function arrayUnique(array) {
+  let res = array.concat();
+  for (let i = 0; i < res.length; ++i) {
+    for (let j = i + 1; j < res.length; ++j) {
+      if (res[i]._id.toString() === res[j]._id.toString()) res.splice(j, 1);
+    }
+  }
+
+  return a;
+}
+
+const getSearchRecipes = AsyncHandler(async (req, res, next) => {
+  const keywordIngredient = req.query.keyword
+    ? {
+        "ingredients.name": {
+          $regex: req.query.keyword,
+          $options: "i",
+        },
+      }
+    : {};
+  const keywordtitle = req.query.keyword
+    ? {
+        title: {
+          $regex: req.query.keyword,
+          $options: "i",
+        },
+      }
+    : {};
+  const recipeswithtitle = await Recipe.find({ ...keywordtitle });
+  const recipeswithingredients = await Recipe.find({ ...keywordIngredient });
+  const recipes = arrayUnique(recipeswithtitle.concat(recipeswithingredients));
+  res.json(recipes);
+});
+
 export {
   createRecipe,
   getRecipe,
   getRecipes,
   getWeekRecipes,
+  getSearchRecipesbyIngredients,
+  getSearchRecipes,
   deleteRecipe,
   updateRecipe,
   updateRate,

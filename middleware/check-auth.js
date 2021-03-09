@@ -1,7 +1,8 @@
-import jwt from "jsonwebtoken";
+import jwt, { decode } from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import User from "../models/User.js";
 import mongoose from "mongoose";
+
 const checkauth = asyncHandler(async (req, res, next) => {
   let token;
   if (
@@ -15,28 +16,17 @@ const checkauth = asyncHandler(async (req, res, next) => {
       req.user = await User.findById(
         mongoose.Types.ObjectId(decoded.id)
       ).select("-password");
-
       next();
     } catch (error) {
-      error.statusCode = 401;
-      next(error);
+      console.error(error);
+      res.status(401);
+      throw new Error("Not authorized, token failed");
     }
   }
   if (!token) {
-    const error = new Error("Not authorized, no token");
-    error.statusCode = 401;
-    next(error);
+    res.status(401);
+    throw new Error("Not authorized, no token");
   }
 });
 
-const checkadmin = (req, res, next) => {
-  if (req.user.isAdmin) {
-    next();
-  } else {
-    const error = new Error("Not authorized, you aren't an administrator");
-    error.statusCode = 401;
-    next(error);
-  }
-};
-
-export { checkauth, checkadmin };
+export { checkauth };
