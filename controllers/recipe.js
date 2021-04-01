@@ -3,7 +3,6 @@ import { validationResult } from "express-validator";
 import Recipe from "../models/Recipe.js";
 
 const createRecipe = AsyncHandler(async (req, res, next) => {
-  console.log(req.body);
   if (req.user.isAdmin) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

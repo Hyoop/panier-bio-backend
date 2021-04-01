@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import panierRoutes from "./routes/panier.js";
 import recipeRoutes from "./routes/recipe.js";
 import userRoutes from "./routes/user.js";
+import subscriptionRoutes from "./routes/subscription.js";
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ app.use((req, res, next) => {
 app.use("/api/panier", panierRoutes);
 app.use("/api/recipe", recipeRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/subscription", subscriptionRoutes);
 
 //Error handling
 app.use((error, req, res, next) => {
