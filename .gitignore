@@ -3,3 +3,8 @@ LaunchDev/
 scriptstart.bat
 images/
 .env
+data/
+docker-compose.yml
+.dockerignore
+.env_docker
+mongo-init.js

@@ -1,6 +1,9 @@
 import asyncHandler from "express-async-handler";
 import generateToken from "../utils/generateToken.js";
 import User from "../models/User.js";
+import Subscription from "../models/Subscription.js";
+import Vegetable from "../models/Vegetable.js";
+import Recipe from "../models/Recipe.js";
 
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -61,4 +64,29 @@ const authAdmin = asyncHandler(async (req, res) => {
     throw new Error("Invalid email or password");
   }
 });
-export { authUser, registerUser, authAdmin };
+
+const GetInformation = asyncHandler(async (req, res) => {
+  const expired = false;
+  try {
+    const Nbsubscriptions = await Subscription.count({ expired: expired });
+    const NbVege = await Vegetable.count();
+    const NbUsers = await User.count();
+    const NbRecipes = await Recipe.count();
+
+    res.json({
+      message: "Fetched Subscriptions successfully.",
+      Informations: {
+        NumberSubscriptions: Nbsubscriptions,
+        NumberVegetables: NbVege,
+        NumberUsers: NbUsers,
+        NumberRecipes: NbRecipes,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(404);
+    throw new Error("Can't count database");
+  }
+});
+
+export { authUser, registerUser, authAdmin, GetInformation };

@@ -11,7 +11,6 @@ const checkauth = asyncHandler(async (req, res, next) => {
   ) {
     try {
       token = req.headers.authorization.split(" ")[1]; // Authorization: 'Bearer TOKEN'
-
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = await User.findById(
         mongoose.Types.ObjectId(decoded.id)

@@ -8,6 +8,8 @@ const userSchema = new Schema({
     type: String,
     required: true,
     unique: true,
+    lowercase: true,
+    trim: true, // remove space for example " Hello", "Hello ", "Hello" are the same
   },
   password: {
     type: String,

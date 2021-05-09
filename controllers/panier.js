@@ -44,6 +44,7 @@ const createVegetable = (req, res, next) => {
 
 const getVegetable = (req, res, next) => {
   const vegeId = req.params.vegeId;
+
   Vegetable.findById(vegeId)
     .then((vegetable) => {
       if (!vegetable) {

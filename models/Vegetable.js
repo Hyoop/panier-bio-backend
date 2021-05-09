@@ -21,3 +21,4 @@ const vegeSchema = new Schema({
 });
 
 export default mongoose.model("Vegetable", vegeSchema);
+

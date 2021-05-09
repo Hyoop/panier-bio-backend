@@ -6,6 +6,7 @@ const SUBSCRIPTION_TYPE_MAP = {
   "1 month": 4,
   "4 months": 16,
 };
+
 const subSchema = new Schema({
   email: {
     type: String,
@@ -16,11 +17,10 @@ const subSchema = new Schema({
     type: String,
     required: true,
   },
-  NbBaskets: {
+  // The quantity of baskets that the client can take during the week
+  quantity: {
     type: Number,
-    default: function () {
-      return SUBSCRIPTION_TYPE_MAP[this.typeSubscription.toLowerCase()];
-    },
+    default: 1,
     required: false,
   },
 
@@ -41,13 +41,22 @@ const subSchema = new Schema({
   },
   collect: {
     type: Boolean,
-    default: false,
+    default: true,
+    required: false,
+  },
+  collectdate: {
+    type: Date,
     required: false,
   },
   expired: {
     type: Boolean,
     default: false,
     required: false,
+  },
+  request_uuid: {
+    type: String,
+    required: true,
+    unique: true,
   },
 });
 

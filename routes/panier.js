@@ -20,7 +20,6 @@ router.get("/search", checkauth, getSearchVegetables);
 router.get("/:vegeId", checkauth, getVegetable);
 
 // Admin control panel
-// /api/panier/add-vegetable
 router.post("/", fileUpload.single("image"), createVegetable);
 router.delete("/:vegeId", checkauth, deleteVegetable);
 router.put("/:vegeId", checkauth, updateVegetable);
